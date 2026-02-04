@@ -13,3 +13,5 @@ time
 os
 sounddevice
 scipy
+win32
+pythoncom
