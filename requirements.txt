@@ -15,3 +15,7 @@ sounddevice
 scipy
 win32
 pythoncom
+aiortc
+opencv-python
+aiohttp
+numpy

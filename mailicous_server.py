@@ -48,8 +48,5 @@ def get_selfi():
             f.write(base64.b64decode(image_data))
         return "OK", 200
     return "failed", 400
-@app.route('/streaming', methods=['GET'])
-def streamer_website():
-    return render_template("streamer.html")
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=2020,debug=True)

