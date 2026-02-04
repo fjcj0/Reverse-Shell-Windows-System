@@ -50,6 +50,6 @@ def get_selfi():
     return "failed", 400
 @app.route('/streaming', methods=['GET'])
 def streamer_website():
-    return render_template("./templates/streamer.html")
+    return render_template("streamer.html")
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=2020,debug=True)
