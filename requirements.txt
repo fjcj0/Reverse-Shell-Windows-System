@@ -1,0 +1,15 @@
+flask
+datetime
+socket
+subprocess
+shlex
+threading
+sys
+webbrowser
+pyautogui
+BytesIO
+requests
+time
+os
+sounddevice
+scipy
