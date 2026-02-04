@@ -19,3 +19,4 @@ aiortc
 opencv-python
 aiohttp
 numpy
+asyncio
