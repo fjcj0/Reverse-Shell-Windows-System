@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request,render_template
 import os
 from datetime import datetime
 import base64
@@ -48,5 +48,8 @@ def get_selfi():
             f.write(base64.b64decode(image_data))
         return "OK", 200
     return "failed", 400
+@app.route('/streaming', methods=['GET'])
+def streamer_website():
+    return render_template("./templates/streamer.html")
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=2020)
+    app.run(host="0.0.0.0", port=2020,debug=True)
