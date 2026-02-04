@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import asyncio
 import sounddevice as sd
-from aiortc import RTCPeerConnection, MediaStreamTrack, RTCSessionDescription
+from aiortc import RTCPeerConnection, RTCSessionDescription
 from aiortc.mediastreams import AudioStreamTrack, VideoStreamTrack
 class CameraVideoTrack(VideoStreamTrack):
     def __init__(self):
