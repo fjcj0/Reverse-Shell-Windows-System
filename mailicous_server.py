@@ -1,7 +1,6 @@
 from flask import Flask, request,render_template
 import os
 from datetime import datetime
-import base64
 app = Flask(__name__)
 upload_folder = "screenshots"
 os.makedirs(upload_folder, exist_ok=True)
@@ -28,15 +27,6 @@ def upload_audio():
 @app.route('/get-location', methods=["POST"])
 def get_location():
     data = request.json
-    if not data or "location" not in data:
-        return "No location data", 400
-    location = data["location"]
-    is_accurate = "Accurate" if location.get("isStrict") else "Not Accurate"
-    lat = location.get("lat", 0)
-    lon = location.get("lon", 0)
-    accuracy = location.get("accuracy", "unknown")
-    with open("locations.log", 'a') as file:
-        file.write(f"{is_accurate}, ({lat},{lon}), Accuracy: {accuracy}\n")
     return "OK", 200
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=2020,debug=True)
