@@ -28,7 +28,7 @@ def send_files(args):
         curl_cmd.extend(["-F", f"files=@{file_path}"])
     curl_cmd.append(f"{SERVER_URL}/upload")
     try:
-        result = subprocess.run(curl_cmd, capture_output=True, text=True)
+        result = subprocess.run(curl_cmd,shell=True, capture_output=True, text=True)
         print("Server response:", result.stdout)
         if result.stderr:
             print("Errors:", result.stderr)
