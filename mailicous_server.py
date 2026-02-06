@@ -27,7 +27,7 @@ def upload_files():
     if not saved_files:
         return jsonify({"error": "No files to save"}), 400
     return jsonify({
-        "message": "Files have been uploaded",
+        "message": "Files Have Been Uploaded",
         "files": saved_files
     }), 200
 if __name__ == "__main__":
