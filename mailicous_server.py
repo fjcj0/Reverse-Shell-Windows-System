@@ -1,32 +1,34 @@
-from flask import Flask, request,render_template
+from flask import Flask, request, jsonify
 import os
 from datetime import datetime
+from werkzeug.utils import secure_filename
 app = Flask(__name__)
-upload_folder = "screenshots"
-os.makedirs(upload_folder, exist_ok=True)
-os.makedirs("pictures", exist_ok=True)
-os.makedirs("audio", exist_ok=True)
-@app.route('/upload-picture', methods=["POST"])
-def upload_picture():
-    if "image" not in request.files:
-        return "No Images", 400
-    image = request.files["image"]
-    filename = datetime.now().strftime("%Y%m%d_%H%M%S") + ".png"
-    path = os.path.join(upload_folder, filename)
-    image.save(path)
-    return "OK", 200
-@app.route("/upload-audio", methods=["POST"])
-def upload_audio():
-    if "audio" not in request.files:
-        return "No audio", 400
-    audio = request.files["audio"]
-    filename = datetime.now().strftime("%Y%m%d_%H%M%S") + ".wav"
-    path = os.path.join("audio", filename)
-    audio.save(path)
-    return "OK", 200
-@app.route('/get-location', methods=["POST"])
-def get_location():
-    data = request.json
-    return "OK", 200
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+@app.route("/upload", methods=["POST"])
+def upload_files():
+    if "files" not in request.files:
+        return jsonify({"error": "there are no files"}), 400
+    files = request.files.getlist("files")
+    saved_files = []
+    for file in files:
+        if file.filename == "":
+            continue
+        filename = secure_filename(file.filename)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+        filename = f"{timestamp}_{filename}"
+        file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        file.save(file_path)
+        saved_files.append({
+            "filename": filename,
+            "path": file_path
+        })
+    if not saved_files:
+        return jsonify({"error": "No files to save"}), 400
+    return jsonify({
+        "message": "Files have been uploaded",
+        "files": saved_files
+    }), 200
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=2020,debug=True)
+    app.run(host="0.0.0.0", port=2020, debug=True)
