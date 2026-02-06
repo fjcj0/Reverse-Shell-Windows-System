@@ -9,7 +9,7 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 @app.route("/upload", methods=["POST"])
 def upload_files():
     if "files" not in request.files:
-        return jsonify({"error": "لا توجد ملفات"}), 400
+        return jsonify({"error": "There are no files"}), 400
     files = request.files.getlist("files")
     saved_files = []
     for file in files:
@@ -26,11 +26,11 @@ def upload_files():
                 "path": file_path
             })
         except Exception as e:
-            return jsonify({"error": f"فشل حفظ الملف {file.filename}: {str(e)}"}), 500
+            return jsonify({"error": f"Failed save file: {file.filename}: {str(e)}"}), 500
     if not saved_files:
-        return jsonify({"error": "لم يتم حفظ أي ملفات"}), 400
+        return jsonify({"error": "The file didn't save"}), 400
     return jsonify({
-        "message": "تم رفع الملفات بنجاح ✅",
+        "message": "Folder has been uploaded",
         "files": saved_files
     }), 200
 if __name__ == "__main__":
