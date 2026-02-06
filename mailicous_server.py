@@ -38,15 +38,5 @@ def get_location():
     with open("locations.log", 'a') as file:
         file.write(f"{is_accurate}, ({lat},{lon}), Accuracy: {accuracy}\n")
     return "OK", 200
-@app.route('/get-selfi', methods=["POST"])
-def get_selfi():
-    data = request.json
-    image_data = data.get("image") if data else None
-    count = len(os.listdir("pictures"))
-    if image_data:
-        with open(os.path.join("pictures", f"image_{count:03d}.jpg"), "wb") as f:
-            f.write(base64.b64decode(image_data))
-        return "OK", 200
-    return "failed", 400
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=2020,debug=True)
