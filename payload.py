@@ -11,38 +11,39 @@ import subprocess
 import shlex
 def get_location_and_send():
     ps_command = r'''
-    Add-Type -AssemblyName System.Device
-    $geo = New-Object System.Device.Location.GeoCoordinateWatcher([System.Device.Location.GeoPositionAccuracy]::High)
-    $geo.Start()
-    $i=0
-    while (($geo.Status -ne 'Ready') -and ($geo.Permission -ne 'Denied') -and ($i -lt 30)) {
-        Start-Sleep -Milliseconds 200
-        $i++
-    }
-    if ($geo.Permission -eq 'Denied' -or $geo.Status -ne 'Ready' -or $geo.Position.Location.HorizontalAccuracy -gt 500) {
-        try {
-            $ip = Invoke-RestMethod ipinfo.io
-            @{
-                source    = "IP"
-                city      = $ip.city
-                region    = $ip.region
-                country   = $ip.country
-                latitude  = $ip.loc.Split(',')[0]
-                longitude = $ip.loc.Split(',')[1]
-                accuracy  = "approximate"
-            } | ConvertTo-Json
-        } catch {
-            @{ error = "location_unavailable" } | ConvertTo-Json
+ Add-Type -AssemblyName System.Device
+$geo = New-Object System.Device.Location.GeoCoordinateWatcher([System.Device.Location.GeoPositionAccuracy]::High)
+$geo.Start()
+$i=0
+while (($geo.Status -ne 'Ready') -and ($geo.Permission -ne 'Denied') -and ($i -lt 30)) {
+    Start-Sleep -Milliseconds 200
+    $i++
+}
+if ($geo.Permission -eq 'Denied' -or $geo.Status -ne 'Ready' -or $geo.Position.Location.HorizontalAccuracy -gt 500) {
+    try {
+        $ip = Invoke-RestMethod ipinfo.io
+        $result = @{
+            source    = "IP"
+            city      = $ip.city
+            region    = $ip.region
+            country   = $ip.country
+            latitude  = $ip.loc.Split(',')[0]
+            longitude = $ip.loc.Split(',')[1]
+            accuracy  = "approximate"
         }
-    } else {
-        $c = $geo.Position.Location
-        @{
-            source    = "GPS/WiFi"
-            latitude  = $c.Latitude
-            longitude = $c.Longitude
-            accuracy  = [math]::Round($c.HorizontalAccuracy,2)
-        } | ConvertTo-Json
+    } catch {
+        $result = @{ error = "location_unavailable" }
     }
+} else {
+    $c = $geo.Position.Location
+    $result = @{
+        source    = "GPS/WiFi"
+        latitude  = $c.Latitude
+        longitude = $c.Longitude
+        accuracy  = [math]::Round($c.HorizontalAccuracy,2)
+    }
+}
+$result | ConvertTo-Json
     '''
     ps_result = subprocess.run(
         ["powershell", "-NoProfile", "-Command", ps_command],
