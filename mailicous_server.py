@@ -42,10 +42,15 @@ def upload_files():
     }), 200
 @app.route("/get-location", methods=["POST"])
 def get_location():
-    location = request.get_json()
+    location = None
+    if request.is_json:
+        location = request.get_json()
+    else:
+        location_text = request.get_data(as_text=True)
+        if location_text:
+            location = {"raw": location_text}
     if not location:
-        return jsonify({"status": "error", "message": "No JSON received"}), 400
-    print("📍 Location received:", location)
+        return jsonify({"status": "error", "message": "No data received"}), 400
     log_to_file(location)
     return jsonify({"status": "ok", "saved": True})
 if __name__ == "__main__":
