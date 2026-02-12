@@ -1,4 +1,6 @@
-# 🔒 Reverse Shell Windows (Educational Use Only)
+# 🔒 𝒟ℛ𝒜𝒢𝒪𝒩 ℬ𝒜𝒞𝒦𝒟𝒪𝒪ℛ
+
+![Project Logo](public/logo.png)
 
 > ⚠️ **Warning:** This code is intended **for educational purposes only** and should only be run in a **controlled lab environment** on systems you own. Using it on devices without permission is illegal. 🚫
 
