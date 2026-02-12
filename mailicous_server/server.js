@@ -10,6 +10,7 @@ const LOG_FILE = path.join(__dirname, "locations.log");
 app.use(morgan('dev'));
 app.use(express.json());  
 app.use(express.text());      
+app.use("/uploads", express.static(UPLOAD_FOLDER));
 function logToFile(data) {
     const timestamp = new Date().toISOString();
     const line = `[${timestamp}] ${JSON.stringify(data)}\n`;
