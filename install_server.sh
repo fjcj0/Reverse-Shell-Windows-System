@@ -1,0 +1,1 @@
+cd mailicous_server && npm install && npm run dev
