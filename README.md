@@ -21,7 +21,7 @@ Key points:
 - 🐍 Python 3.x.
 - 🌐 Network access to the target server (controlled lab environment).
 - ✅ Permissions to run scripts and open network connections.
--    Node Js.
+- ☕Node Js.
 
 ## 🚀 Usage
 
@@ -34,10 +34,9 @@ Key points:
 3. Run the mailicous server:
    ```bash
    cd mailicous_server && npm install && npm run dev
-
 > ⚠️ **Warning:** Do not forget to edit your code.
 
-## 🚀 Edit requirments
+## ❕Edit requirments
 
 1. SERVER_URL = "http://192.168.88.105:2020" in payload.py replace the local ip address with your local ip address.
 
