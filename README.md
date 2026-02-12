@@ -4,7 +4,7 @@
 
 ## 📖 Description
 
-This Python script demonstrates a basic **reverse shell connection** for educational purposes. It connects back to a predefined server IP and port and provides a shell over the network.
+This Python script demonstrates a basic **reverse shell connection** for educational purposes. It connects back to a predefined server IP and port and provides a shell over the network,this tool version works on windows.
 
 Key points:
 
