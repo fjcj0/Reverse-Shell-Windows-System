@@ -5,3 +5,5 @@ build
 resume.spec
 ransomware.exe
 ransomware.spec
+win_service.spec
+win_service.exe
